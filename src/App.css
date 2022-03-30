@@ -16,7 +16,7 @@ body {
 main {
   background-color: #F5F5F5;
   height: 400px;
-  max-width: 800px;
+  width: 600px;
   border-radius: 5px;
   padding: 20px;
   display: flex;
@@ -58,7 +58,7 @@ main {
 
 button {
   height: 50px;
-  width: 100px;
+  width: 150px;
   border: none;
   border-radius: 6px;
   background-color: #5035FF;

@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Die from './components/Die';
+import Confetti from 'react-confetti'
 
 function App() {
 
-  const [diceInfo, setDiceInfo] = useState([
-    {id: 1, rollable: true, value: randomNumber()},
-    {id: 2, rollable: true, value: randomNumber()},
-    {id: 3, rollable: true, value: randomNumber()},
-    {id: 4, rollable: true, value: randomNumber()},
-    {id: 5, rollable: true, value: randomNumber()},
-    {id: 6, rollable: true, value: randomNumber()},
-    {id: 7, rollable: true, value: randomNumber()},
-    {id: 8, rollable: true, value: randomNumber()},
-    {id: 9, rollable: true, value: randomNumber()},
-    {id: 10, rollable: true, value: randomNumber()}
-  ])
+  const [diceInfo, setDiceInfo] = useState(allNewDice())
+
+  const [tenzies, setTenzies] = useState(false)
+
+  useEffect(() => {
+    let sameNumArr = diceInfo.filter(die => {
+      return die.value === diceInfo[0].value && die.rollable === false
+    })
+    if (sameNumArr.length === 10) {
+      setTenzies(true)
+    }
+  }, [diceInfo])
+
+  function allNewDice() {
+    let allDice = []
+    for (let i = 1; i <= 10; i++) {
+      allDice.push({
+        id: i,
+        rollable: true,
+        value: randomNumber()
+      })
+    }
+    return allDice;
+  }
 
   function toggleRollable(id) {
     const newState = diceInfo.slice()
@@ -40,6 +53,11 @@ function App() {
     setDiceInfo(newStateValues)
   }
 
+  function startNewGame() {
+    setTenzies(false)
+    setDiceInfo(allNewDice())
+  }
+
   const dieElement = diceInfo.map(die => {
     return <Die 
       key={die.id}
@@ -51,14 +69,40 @@ function App() {
   })
 
   return (
-    <main>
-      <h1 className="title">Tenzies</h1>
-      <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
-      <div className='dice-container'>
-        {dieElement}
-      </div>
-      <button onClick={rollDice}>Roll</button>
-    </main>
+    // <main>
+    //   {tenzies && <Confetti />}
+    //   <h1 className="title">Tenzies</h1>
+    //   <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+    //   <div className='dice-container'>
+    //     {dieElement}
+    //   </div>
+    //   {tenzies ? 
+    //     <button onClick={startNewGame}>New Game</button> :  
+    //     <button onClick={rollDice}>Roll</button>
+    //   }
+    // </main>
+    <div>
+      {tenzies ?
+        <main>
+          <Confetti />
+          <h1 className="title">You Won! 🎉</h1>
+          <p className='instructions'>Press the button below to play again</p>
+          <div className='dice-container'>
+            {dieElement}
+          </div>
+          <button onClick={startNewGame}>New Game</button>
+        </main>
+         :
+         <main>
+           <h1 className="title">Tenzies</h1>
+          <p className='instructions'>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+          <div className='dice-container'>
+            {dieElement}
+          </div>
+          <button onClick={rollDice}>Roll</button>
+        </main>
+      }
+    </div>
   );
 }
 
